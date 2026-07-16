@@ -5,6 +5,7 @@ This repository is a showcase of a weapon combat system programmed with Luau - b
 # ***Info***
 This combat system is inspired by the combat of Bleach Roblox game, **VV Ultimatum.**
 Before reading this documentation, it is highly recommended to read the scripts as it is explained better if you have but you don't really need to understand it, since I explain it here.
+**The UI was created using React + ReactRoblox.**
 **If you're wondering what a 'Zanpakuto' is,** its the word for weapon (basically) in Bleach (manga/anime).
 
 # ***Combat System***
