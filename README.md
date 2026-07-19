@@ -7,6 +7,7 @@ This combat system is inspired by the combat of Bleach Roblox game, **VV Ultimat
 Before reading this documentation, it is highly recommended to read the scripts as it is explained better if you have but you don't really need to understand it, since I explain it here.
 **The UI was created using React + ReactRoblox.**
 **If you're wondering what a 'Zanpakuto' is,** its the word for weapon (basically) in Bleach (manga/anime).
+Game link: https://www.roblox.com/games/90192835918318/Zanpakuto
 
 # ***Combat System***
 In this project, I use a **table of data (name, damage, animation id, etc)** to efficiently make it so that we don't have to manually change variables, and other things that may need changing, to just get the same keyword (like CombatData.Damage, makes sense if you read the scripts).
