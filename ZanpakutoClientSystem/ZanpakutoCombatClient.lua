@@ -43,18 +43,21 @@ function module.Start()
     local Character: Model = Player.Character or Player.CharacterAdded:Wait()
     local Humanoid = Character:WaitForChild("Humanoid")::Humanoid
 
+    -- handles input, obv
     InputDetectionHandler.InputTypeDetection(Enum.UserInputType.MouseButton1, function()
         local ServerValidation: boolean, CombatDataKey = ClientMeleeRequest:InvokeServer(Player)
-        
+            
+        -- isn't it obvious
         if not ServerValidation then
-            return 
+            return
         end
         
+        -- basically, if there is no data
         if typeof(CombatDataKey) ~= "table" then
             return
         end
 
-        --// Hitbox props
+        -- Hitbox properties - making it a type so they have some required props
         type HitboxProps = {
             Size: Vector3,
             Cframe: CFrame,
@@ -77,9 +80,11 @@ function module.Start()
             LifeTime = 0.65,
         }
 
+        -- calback if an animation event is reached
         AnimationHandler.LoadAnimation(Character, "Combat-Swing", CombatDataKey.AnimationId, function(MarkerName)
             Humanoid.WalkSpeed = 0
-            
+
+            -- decide whether its the last swing or not, create hitbox with its props to the hitbox props specified (if its a finisher swing then it applies finisher hitbox props, else is obvious)
             local Hitbox: BasePart
             if CombatDataKey.Name ~= CombatData.FinisherSwing.Name then
                 Hitbox = HitboxCreationHandler.Construct(NormalHitboxProps.Size, NormalHitboxProps.Cframe, NormalHitboxProps.Transparency, NormalHitboxProps.Color, NormalHitboxProps.LifeTime)
@@ -87,6 +92,7 @@ function module.Start()
                 Hitbox = HitboxCreationHandler.Construct(FinisherHitboxProps.Size, FinisherHitboxProps.Cframe, FinisherHitboxProps.Transparency, FinisherHitboxProps.Color, FinisherHitboxProps.LifeTime)
             end
 
+            -- lets everything else runs
             task.delay(0.5, function()
                 Humanoid.WalkSpeed = 16
             end)
@@ -95,9 +101,10 @@ function module.Start()
             local SlashSfx: Sound = CombatDataKey.SlashSound
             local HitVfx: BasePart = CombatDataKey.HitVFX
             local HitSfx: Sound = CombatDataKey.HitSound
+    
+            print(SlashVfx, SlashSfx) -- debug
 
-            print(SlashVfx, SlashSfx)
-
+            -- handles cloning and parenting and playing vfx and sfx (but isn't the best thing to do)
             VFXHandler.LoadVFX(SlashVfx, Hitbox, 1)
             SFXHandler.LoadSFX(SlashSfx, Hitbox)
 
