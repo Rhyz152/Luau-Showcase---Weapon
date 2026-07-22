@@ -1,3 +1,4 @@
+--// Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
@@ -33,6 +34,7 @@ local ZanpakutoConnections = Connections.ZanpakutoConnections
 local WeaponEquipEvent: RemoteEvent = ZanpakutoConnections.WeaponEquipEvent
 local ZanpakutoEquippedEvent: RemoteEvent = ZanpakutoConnections.ZanpakutoEquippedEvent
 
+--// Main
 local module = {}
 
 local Player = Players.LocalPlayer
@@ -42,7 +44,7 @@ function module.Start()
     InputDetectionHandler.KeycodeDetection(Enum.KeyCode.X, function()
         WeaponEquipEvent:FireServer()
     end)
-
+    
     ZanpakutoEquippedEvent.OnClientEvent:Connect(function(Player, PlayerZanpakuto)
         if not PlayerZanpakuto then
             PlayerZanpakuto = Character.Zanpakuto
