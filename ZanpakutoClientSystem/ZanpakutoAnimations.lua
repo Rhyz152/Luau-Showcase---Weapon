@@ -20,13 +20,14 @@ local Player = Players.LocalPlayer
 
 function module.Start()
     local Character = Player.Character or Player.CharacterAdded:Wait()
-    local AnimateScript = Character:WaitForChild("Animate", 5)
+    local AnimateScript = Character:WaitForChild("Animate", 5) -- this is where default walk, idle, swim, etc Roblox anims are located
     
     if not AnimateScript then 
         warn("Animate script not found in Character!") 
         return 
     end
 
+    -- the normal ids if aren't armed
     local DefaultWalkId = AnimateScript.walk.WalkAnim.AnimationId
     local DefaultIdleId = AnimateScript.idle.Animation1.AnimationId
 
@@ -34,18 +35,22 @@ function module.Start()
         local TargetWalkId, TargetIdleId
 
         if StateName == "Armed" then
+            -- make the sure that our anims should be our custom ones
             TargetWalkId = WalkAnim.AnimationId
             TargetIdleId = IdleAnim.AnimationId
         elseif StateName == "Unarmed" then
+            -- make suer they are normal
             TargetWalkId = DefaultWalkId
             TargetIdleId = DefaultIdleId
         else
             return 
         end
 
+        -- make the anims the targetted ones
         AnimateScript.walk.WalkAnim.AnimationId = TargetWalkId
         AnimateScript.idle.Animation1.AnimationId = TargetIdleId
 
+        -- delay for swaps
         local Humanoid = Character:FindFirstChildOfClass("Humanoid")
         if Humanoid then
             local Animator = Humanoid:FindFirstChildOfClass("Animator")
