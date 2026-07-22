@@ -1,8 +1,9 @@
+--// Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
--- Assets
+--// Assets
 local Assets = ServerStorage:FindFirstChild("Assets")
 local HolsterAssets = Assets:FindFirstChild("Holsters")
 local WeaponModelAssets = Assets:FindFirstChild("WeaponModelAssets")
@@ -13,7 +14,7 @@ local ZanpakutoHolster = HolsterAssets:FindFirstChild("ZanpakutoAccessory")::Acc
 local AnimationsFolder = ReplicatedStorage:FindFirstChild("Animations")
 local ZanpakutoEquipAnimation: Animation = AnimationsFolder:FindFirstChild("ZanpakutoAnimations"):FindFirstChild("EquipAnim")
 
--- SharedUtils
+--// Shared
 local SharedUtils = ReplicatedStorage.Shared.SharedUtils
 
 local PlayerStateUtils = SharedUtils.PlayerStateUtils
@@ -24,16 +25,16 @@ local AnimationHandler = require(AnimationUtils.AnimationHandler)
 local PlayerStateController = require(PlayerStateUtils.PlayerStateController)
 local CooldowHandler= require(CooldownUtils.CooldownHandler)
 
--- Connections
+--// Connections
 local Connections = ReplicatedStorage:FindFirstChild("Connections")
 local ZanpakutoConnections = Connections:FindFirstChild("ZanpakutoConnections")
 local WeaponEquipEvent : RemoteEvent = ZanpakutoConnections:FindFirstChild("WeaponEquipEvent")
 local ZanpakutoEquippedEvent: RemoteEvent = ZanpakutoConnections:FindFirstChild("ZanpakutoEquippedEvent")
 
+--// Main
 local module = {}
 
 local LastEquip: {} = {}
-
 local PlayerWeapons: {} = {}
 local PlayerHolsters: {} = {}
 
@@ -53,6 +54,7 @@ local function CreateWeapon(Player:Player, PlayerZanpakutoHolster:Accessory)
 
     Humanoid.WalkSpeed = 0
 
+    -- animation handler handles reaching keyframes and what to do next (animation events)
     AnimationHandler.LoadAnimation(Character, "EquipAnimation", ZanpakutoEquipAnimation.AnimationId, function(MarkerName)
         PlayerStateController.EnablePlayerState(Player, "Armed")
     
@@ -70,12 +72,12 @@ local function CreateWeapon(Player:Player, PlayerZanpakutoHolster:Accessory)
         local Motor6D = PlayerZanpakutoHandle:FindFirstChild("Motor6D")::Motor6D
         Motor6D.Part0 = RightArm
         Motor6D.Part1 = PlayerZanpakutoHandle
-        Motor6D.C1 = HandleCframeValue.Value
+        Motor6D.C1 = HandleCframeValue.Value -- Pos = CFrame.new(0, -1, 0), Orientation = CFrame.new(0, 90, 0)
     
         ZanpakutoEquippedEvent:FireClient(Player, PlayerZanpakuto)
     
         PlayerZanpakuto.Parent = Character
-        PlayerWeapons[Player] = PlayerZanpakuto
+        PlayerWeapons[Player] = PlayerZanpakuto -- to destroy later
     
         Humanoid.WalkSpeed = 16
     end)
@@ -99,12 +101,15 @@ local function DestroyWeapon(Player:Player, PlayerZanpakuto:Model)
     PlayerZanpakutoHolster = ZanpakutoHolster:Clone()
     Humanoid:AddAccessory(PlayerZanpakutoHolster)
 
-    PlayerHolsters[Player] = PlayerZanpakutoHolster
+    PlayerHolsters[Player] = PlayerZanpakutoHolster -- to destroy later
 end
 
 function module.Start() 
     
     WeaponEquipEvent.OnServerEvent:Connect(function(Player: Player, ...)
+        -- if armed, create weapon & destroy holster
+        -- if unarmed, destroy weapon & create holster
+        -- other state = skip
         if PlayerStateController.GetPlayerState(Player, "Armed") == true then
             DestroyWeapon(Player, PlayerWeapons[Player])
         elseif PlayerStateController.GetPlayerState(Player, "Unarmed") == true then
@@ -114,6 +119,7 @@ function module.Start()
         end
     end)
 
+    --// Cleanup
     Players.PlayerRemoving:Connect(function(Player:Player)
         PlayerHolsters[Player] = nil
         PlayerWeapons[Player] = nil
