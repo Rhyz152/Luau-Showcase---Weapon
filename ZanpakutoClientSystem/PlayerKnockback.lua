@@ -1,3 +1,6 @@
+-- NOT important to this system, I kind 
+
+--// Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
